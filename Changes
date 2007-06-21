@@ -1,0 +1,54 @@
+                                Muldis::DB
+---------------------------------------------------------------------------
+
+2007-06-20   Darren Duncan <perl@DarrenDuncan.net>
+
+    * Muldis::DB version 0.0.0 for Perl 5 is released on CPAN as
+    Muldis-DB-0.0.0.tar.gz.  Muldis::DB version 0.0.0 for Perl 6 is not
+    released at this time, if ever, since it is currently released only as
+    part of the Perl6-Pugs project (in its ext/Muldis-DB/ subdirectory),
+    which sets its own less frequent release schedule.  The rest of this
+    Changes entry refers only to the Perl 5 version.
+
+    * This is the first release of the Perl 5 Muldis-DB distribution, and
+    the first release of any distribution to contain Perl 5 modules named
+    Muldis::DB::\w+.
+
+    * This is the initial file manifest:
+
+        archives/OSCON2005LightningTalk.txt
+        archives/OSCON2006SessionProposal.txt
+        Changes
+        INSTALL
+        lib/Muldis/DB.pm
+        lib/Muldis/DB/AST.pm
+        lib/Muldis/DB/Copying.pod
+        lib/Muldis/DB/Engine/Example.pm
+        lib/Muldis/DB/Engine/Example/Operators.pm
+        lib/Muldis/DB/Engine/Example/PhysType.pm
+        lib/Muldis/DB/Language.pod
+        lib/Muldis/DB/SeeAlso.pod
+        lib/Muldis/DB/Validator.pm
+        Makefile.PL
+        MANIFEST			This list of files
+        MANIFEST.SKIP
+        META.yml
+        README
+        t/MDB_00_Compile.t
+        t/MDB_10_AST_Literals.t
+        t/MDB_50_Validate_Example.t
+        TODO
+
+    * Initial code file versions are: DB.pm and AST.pm and Validator.pm and
+    Example.pm and PhysType.pm and Operators.pm 0.0.0.
+
+    * As of this release, Muldis-DB is officially in pre-alpha development
+    status.  A lot of documentation and functionality is present, but a lot
+    isn't.  What is mostly done is the higher level documentation plus an
+    alpha-quality but fundamentally stable public API implementation.  What
+    is mostly undone is the reference engine implementation, the test
+    suite, and documentation of the API details.  What is already present
+    should be sufficient to begin study of Muldis-DB such that it can
+    actually be put to use within the next few weeks or months as Muldis-DB
+    is fleshed out.  Also, it should be possible now to start writing code
+    that uses or extends it.

@@ -1,0 +1,1187 @@
+use 5.008001;
+use utf8;
+use strict;
+use warnings FATAL => 'all';
+
+###########################################################################
+###########################################################################
+
+my $EMPTY_STR = q{};
+
+my $FALSE = (1 == 0);
+my $TRUE  = (1 == 1);
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType; # module
+    our $VERSION = 0.000000;
+    # Note: This given version applies to all of this file's packages.
+
+    use base 'Exporter';
+    our @EXPORT_OK = qw(
+        ptBool ptText ptBlob ptInt
+        ptTuple ptQuasiTuple
+        ptRelation ptQuasiRelation
+        ptTypeInvoNQ ptTypeInvoAQ
+        ptTypeDictNQ ptTypeDictAQ
+        ptValueDictNQ ptTypeDictAQ
+    );
+
+###########################################################################
+
+sub ptBool {
+    my ($args) = @_;
+    my ($v) = @{$args}{'v'};
+    return Muldis::DB::Engine::Example::PhysType::Bool->new({ 'v' => $v });
+}
+
+sub ptText {
+    my ($args) = @_;
+    my ($v) = @{$args}{'v'};
+    return Muldis::DB::Engine::Example::PhysType::Text->new({ 'v' => $v });
+}
+
+sub ptBlob {
+    my ($args) = @_;
+    my ($v) = @{$args}{'v'};
+    return Muldis::DB::Engine::Example::PhysType::Blob->new({ 'v' => $v });
+}
+
+sub ptInt {
+    my ($args) = @_;
+    my ($v) = @{$args}{'v'};
+    return Muldis::DB::Engine::Example::PhysType::Int->new({ 'v' => $v });
+}
+
+sub ptTuple {
+    my ($args) = @_;
+    my ($heading, $body) = @{$args}{'heading', 'body'};
+    return Muldis::DB::Engine::Example::PhysType::Tuple->new({
+        'heading' => $heading, 'body' => $body });
+}
+
+sub ptQuasiTuple {
+    my ($args) = @_;
+    my ($heading, $body) = @{$args}{'heading', 'body'};
+    return Muldis::DB::Engine::Example::PhysType::QuasiTuple->new({
+        'heading' => $heading, 'body' => $body });
+}
+
+sub ptRelation {
+    my ($args) = @_;
+    my ($heading, $body) = @{$args}{'heading', 'body'};
+    return Muldis::DB::Engine::Example::PhysType::Relation->new({
+        'heading' => $heading, 'body' => $body });
+}
+
+sub ptQuasiRelation {
+    my ($args) = @_;
+    my ($heading, $body) = @{$args}{'heading', 'body'};
+    return Muldis::DB::Engine::Example::PhysType::QuasiRelation->new({
+        'heading' => $heading, 'body' => $body });
+}
+
+sub ptTypeInvoNQ {
+    my ($args) = @_;
+    my ($kind, $spec) = @{$args}{'kind', 'spec'};
+    return Muldis::DB::Engine::Example::PhysType::TypeInvoNQ->new({
+        'kind' => $kind, 'spec' => $spec });
+}
+
+sub ptTypeInvoAQ {
+    my ($args) = @_;
+    my ($kind, $spec) = @{$args}{'kind', 'spec'};
+    return Muldis::DB::Engine::Example::PhysType::TypeInvoAQ->new({
+        'kind' => $kind, 'spec' => $spec });
+}
+
+sub ptTypeDictNQ {
+    my ($args) = @_;
+    my ($map) = @{$args}{'map'};
+    return Muldis::DB::Engine::Example::PhysType::TypeDictNQ->new({
+        'map' => $map });
+}
+
+sub ptTypeDictAQ {
+    my ($args) = @_;
+    my ($map) = @{$args}{'map'};
+    return Muldis::DB::Engine::Example::PhysType::TypeDictAQ->new({
+        'map' => $map });
+}
+
+sub ptValueDictNQ {
+    my ($args) = @_;
+    my ($map) = @{$args}{'map'};
+    return Muldis::DB::Engine::Example::PhysType::ValueDictNQ->new({
+        'map' => $map });
+}
+
+sub ptValueDictAQ {
+    my ($args) = @_;
+    my ($map) = @{$args}{'map'};
+    return Muldis::DB::Engine::Example::PhysType::ValueDictAQ->new({
+        'map' => $map });
+}
+
+###########################################################################
+
+} # module Muldis::DB::Engine::Example::PhysType
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Value; # role
+
+    use Carp;
+    use Scalar::Util qw(blessed);
+
+#    my $ATTR_ROOT_TYPE = 'Value::root_type';
+        # Muldis::DB::Engine::Example::PhysType::Cat_EntityName.
+        # This is the fundamental Muldis D data type that this ::Value
+        # object's implementation sees it as a generic member of, and which
+        # generally determines what operators can be used with it.
+        # It is a supertype of the declared type.
+#    my $ATTR_DECL_TYPE = 'Value::decl_type';
+        # Muldis::DB::Engine::Example::PhysType::Cat_EntityName.
+        # This is the Muldis D data type that the ::Value was declared to
+        # be a member of when the ::Value object was created.
+#    my $ATTR_LAST_KNOWN_MST = 'Value::last_known_mst';
+        # Muldis::DB::Engine::Example::PhysType::Cat_EntityName.
+        # This is the Muldis::DB data type that is the most specific type
+        # of this ::Value, as it was last determined.
+        # It is a subtype of the declared type.
+        # Since calculating a value's mst may be expensive, this object
+        # attribute may either be unset or be out of date with respect to
+        # the current type system, that is, not be automatically updated at
+        # the same time that a new subtype of its old mst is declared.
+
+#    my $ATTR_WHICH = 'Value::which';
+        # Str.
+        # This is a unique identifier for the value that this object
+        # represents that should compare correctly with the corresponding
+        # identifiers of all ::Value-doing objects.
+        # It is a text string of format "<tnl> <tn> <vll> <vl>" where:
+        #   1. <tn> is the value's root type name (fully qualified)
+        #   2. <tnl> is the character-length of <tn>
+        #   3. <vl> is the (class-determined) stringified value itself
+        #   4. <vll> is the character-length of <vl>
+        # This identifier is mainly used when a ::Value needs to be used as
+        # a key to index the ::Value with, not necessarily when comparing
+        # 2 values for equality.
+        # This identifier can be expensive to calculate, so it will be done
+        # only when actually required; eg, by the which() method.
+
+###########################################################################
+
+sub new {
+    my ($class, $args) = @_;
+    my $self = bless {}, $class;
+    $self->_build( $args );
+    return $self;
+}
+
+sub _build {
+    return; # default for any classes having no attributes
+}
+
+###########################################################################
+
+sub root_type {
+    my ($self) = @_;
+    confess q{not implemented by subclass } . (blessed $self);
+}
+
+sub declared_type {
+    my ($self) = @_;
+    confess q{not implemented by subclass } . (blessed $self);
+}
+
+sub most_specific_type {
+    my ($self) = @_;
+    confess q{not implemented by subclass } . (blessed $self);
+}
+
+sub which {
+    my ($self) = @_;
+    confess q{not implemented by subclass } . (blessed $self);
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    confess q{not implemented by subclass } . (blessed $self);
+}
+
+###########################################################################
+
+sub equal {
+    my ($self, $args) = @_;
+    my ($other) = @{$args}{'other'};
+    return $FALSE
+        if blessed $other ne blessed $self;
+    return $self->_equal( $other );
+}
+
+sub _equal {
+    my ($self) = @_;
+    confess q{not implemented by subclass } . (blessed $self);
+}
+
+###########################################################################
+
+} # role Muldis::DB::Engine::Example::PhysType::Value
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Bool; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Muldis::DB::AST qw(newBoolLit);
+
+    my $ATTR_V = 'v';
+        # A p5 Scalar that equals $FALSE|$TRUE.
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($v) = @{$args}{'v'};
+    $self->{$ATTR_V} = $v;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    return 'sys.type.Bool';
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $s = ''.$self->{$ATTR_V};
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "13 sys.type.Bool $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    return newBoolLit({ 'v' => $self->{$ATTR_V} });
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    return $other->{$ATTR_V} eq $self->{$ATTR_V};
+}
+
+###########################################################################
+
+sub v {
+    my ($self) = @_;
+    return $self->{$ATTR_V};
+}
+
+###########################################################################
+
+} # class Muldis::DB::Engine::Example::PhysType::Bool
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Text; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Muldis::DB::AST qw(newTextLit);
+
+    my $ATTR_V = 'v';
+        # A p5 Scalar that is a text-mode string;
+        # it either has true utf8 flag or is only 7-bit bytes.
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($v) = @{$args}{'v'};
+    $self->{$ATTR_V} = $v;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    return 'sys.type.Text';
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $s = $self->{$ATTR_V};
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "13 sys.type.Text $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    return newTextLit({ 'v' => $self->{$ATTR_V} });
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    return $other->{$ATTR_V} eq $self->{$ATTR_V};
+}
+
+###########################################################################
+
+sub v {
+    my ($self) = @_;
+    return $self->{$ATTR_V};
+}
+
+###########################################################################
+
+} # class Muldis::DB::Engine::Example::PhysType::Text
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Blob; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Muldis::DB::AST qw(newBlobLit);
+
+    my $ATTR_V = 'v';
+        # A p5 Scalar that is a byte-mode string; it has false utf8 flag.
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($v) = @{$args}{'v'};
+    $self->{$ATTR_V} = $v;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    return 'sys.type.Blob';
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $s = $self->{$ATTR_V};
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "13 sys.type.Blob $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    return newBlobLit({ 'v' => $self->{$ATTR_V} });
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    return $other->{$ATTR_V} eq $self->{$ATTR_V};
+}
+
+###########################################################################
+
+sub v {
+    my ($self) = @_;
+    return $self->{$ATTR_V};
+}
+
+###########################################################################
+
+} # class Muldis::DB::Engine::Example::PhysType::Blob
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Int; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Muldis::DB::AST qw(newIntLit);
+
+    use bigint; # this is experimental
+
+    my $ATTR_V = 'v';
+        # A p5 Scalar that is a Perl integer or BigInt or canonical string.
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($v) = @{$args}{'v'};
+    $self->{$ATTR_V} = $v;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    return 'sys.type.Int';
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $s = ''.$self->{$ATTR_V};
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "12 sys.type.Int $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    return newIntLit({ 'v' => $self->{$ATTR_V} });
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    return $other->{$ATTR_V} == $self->{$ATTR_V};
+}
+
+###########################################################################
+
+sub v {
+    my ($self) = @_;
+    return $self->{$ATTR_V};
+}
+
+###########################################################################
+
+} # class Muldis::DB::Engine::Example::PhysType::Int
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::_Tuple; # role
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Carp;
+    use Scalar::Util qw(blessed);
+
+    use Muldis::DB::AST qw(newTupleSel newQuasiTupleSel);
+
+    my $ATTR_HEADING = 'heading';
+    my $ATTR_BODY    = 'body';
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($heading, $body) = @{$args}{'heading', 'body'};
+    $self->{$ATTR_HEADING} = $heading;
+    $self->{$ATTR_BODY}    = $body;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    my ($self) = @_;
+    return 'sys.type.' . ($self->_allows_quasi() ? 'Quasi' : '') . 'Tuple';
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $root_type = 'sys.type.'
+            . ($self->_allows_quasi() ? 'Quasi' : '') . 'Tuple';
+        my $tpwl = (length $root_type) . q{ } . $root_type;
+        my $s = 'H ' . $self->{$ATTR_HEADING}->which()
+            . ' B ' . $self->{$ATTR_BODY}->which();
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "$tpwl $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    my $call_args = { 'heading' => $self->{$ATTR_HEADING}->as_ast(),
+        'body' => $self->{$ATTR_BODY}->as_ast() };
+    return $self->_allows_quasi()
+        ? newQuasiTupleSel( $call_args ) : newTupleSel( $call_args );
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    return ($self->{$ATTR_HEADING}->equal({
+            'other' => $other->{$ATTR_HEADING} })
+        and $self->{$ATTR_BODY}->equal({
+            'other' => $other->{$ATTR_BODY} }));
+}
+
+###########################################################################
+
+sub heading {
+    my ($self) = @_;
+    return $self->{$ATTR_HEADING};
+}
+
+sub body {
+    my ($self) = @_;
+    return $self->{$ATTR_BODY};
+}
+
+###########################################################################
+
+sub attr_count {
+    my ($self) = @_;
+    return $self->{$ATTR_HEADING}->elem_count();
+}
+
+sub attr_exists {
+    my ($self, $args) = @_;
+    my ($attr_name) = @{$args}{'attr_name'};
+    return $self->{$ATTR_HEADING}->elem_exists({
+        'elem_name' => $attr_name });
+}
+
+sub attr_type {
+    my ($self, $args) = @_;
+    my ($attr_name) = @{$args}{'attr_name'};
+    return $self->{$ATTR_HEADING}->elem_value({
+        'elem_name' => $attr_name });
+}
+
+sub attr_value {
+    my ($self, $args) = @_;
+    my ($attr_name) = @{$args}{'attr_name'};
+    return $self->{$ATTR_BODY}->elem_value({ 'elem_name' => $attr_name });
+}
+
+###########################################################################
+
+} # class Muldis::DB::Engine::Example::PhysType::_Tuple
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Tuple; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_Tuple';
+    sub _allows_quasi { return $FALSE; }
+} # class Muldis::DB::Engine::Example::PhysType::Tuple
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::QuasiTuple; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_Tuple';
+    sub _allows_quasi { return $TRUE; }
+} # class Muldis::DB::Engine::Example::PhysType::QuasiTuple
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::_Relation; # role
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Carp;
+    use Scalar::Util qw(blessed);
+
+    use Muldis::DB::AST qw(newRelationSel newQuasiRelationSel);
+
+    my $ATTR_HEADING      = 'heading';
+    my $ATTR_BODY         = 'body';
+    my $ATTR_KEY_OVER_ALL = 'key_over_all';
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($heading, $body) = @{$args}{'heading', 'body'};
+
+    my $key_over_all = {map { $_->which() => $_ } @{$body}}; # elim dup tpl
+
+    $self->{$ATTR_HEADING}      = $heading;
+    $self->{$ATTR_BODY}         = [values %{$key_over_all}]; # no dup in b
+    $self->{$ATTR_KEY_OVER_ALL} = $key_over_all;
+
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    my ($self) = @_;
+    return
+        'sys.type.' . ($self->_allows_quasi() ? 'Quasi' : '') . 'Relation';
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $root_type = 'sys.type.'
+            . ($self->_allows_quasi() ? 'Quasi' : '') . 'Relation';
+        my $tpwl = (length $root_type) . q{ } . $root_type;
+        my $s = 'H ' . $self->{$ATTR_HEADING}->which()
+            . ' B ' . (join ' ', sort keys %{$self->{$ATTR_KEY_OVER_ALL}});
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "$tpwl $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    my $call_args = { 'heading' => $self->{$ATTR_HEADING}->as_ast(),
+        'body' => [map { $_->as_ast() } @{$self->{$ATTR_BODY}}] };
+    return $self->_allows_quasi()
+        ? newQuasiRelationSel( $call_args ) : newRelationSel( $call_args );
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    return $FALSE
+        if !$self->{$ATTR_HEADING}->equal({
+            'other' => $other->{$ATTR_HEADING} });
+    return $FALSE
+        if @{$other->{$ATTR_BODY}} != @{$self->{$ATTR_BODY}};
+    my $v1 = $self->{$ATTR_KEY_OVER_ALL};
+    my $v2 = $other->{$ATTR_KEY_OVER_ALL};
+    for my $ek (keys %{$v1}) {
+        return $FALSE
+            if !exists $v2->{$ek};
+    }
+    return $TRUE;
+}
+
+###########################################################################
+
+sub heading {
+    my ($self) = @_;
+    return $self->{$ATTR_HEADING};
+}
+
+sub body {
+    my ($self) = @_;
+    return $self->{$ATTR_BODY};
+}
+
+###########################################################################
+
+sub tuple_count {
+    my ($self) = @_;
+    return 0 + @{$self->{$ATTR_BODY}};
+}
+
+###########################################################################
+
+sub attr_count {
+    my ($self) = @_;
+    return $self->{$ATTR_HEADING}->elem_count();
+}
+
+sub attr_exists {
+    my ($self, $args) = @_;
+    my ($attr_name) = @{$args}{'attr_name'};
+    return $self->{$ATTR_HEADING}->elem_exists({
+        'elem_name' => $attr_name });
+}
+
+sub attr_type {
+    my ($self, $args) = @_;
+    my ($attr_name) = @{$args}{'attr_name'};
+    return $self->{$ATTR_HEADING}->elem_value({
+        'elem_name' => $attr_name });
+}
+
+sub attr_values {
+    my ($self, $args) = @_;
+    my ($attr_name) = @{$args}{'attr_name'};
+    return [map {
+            $_->elem_value({ 'elem_name' => $attr_name })
+        } @{$self->{$ATTR_BODY}}];
+}
+
+###########################################################################
+
+} # class Muldis::DB::Engine::Example::PhysType::_Relation
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::Relation; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_Relation';
+    sub _allows_quasi { return $FALSE; }
+} # class Muldis::DB::Engine::Example::PhysType::Relation
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::QuasiRelation; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_Relation';
+    sub _allows_quasi { return $TRUE; }
+} # class Muldis::DB::Engine::Example::PhysType::QuasiRelation
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::TypeInvo; # role
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Carp;
+    use Scalar::Util qw(blessed);
+
+    use Muldis::DB::AST qw(newEntityName newTypeInvoNQ newTypeInvoAQ);
+
+    my $ATTR_KIND = 'kind';
+    my $ATTR_SPEC = 'spec';
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($kind, $spec) = @{$args}{'kind', 'spec'};
+    $self->{$ATTR_KIND} = $kind;
+    $self->{$ATTR_SPEC} = $spec;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    my ($self) = @_;
+    return 'sys.type._TypeInvo' . ($self->_allows_quasi() ? 'AQ' : 'NQ');
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $tpwl = '20 sys.type._TypeInvo'
+            . ($self->_allows_quasi() ? 'AQ' : 'NQ');
+        my $kind = $self->{$ATTR_KIND};
+        my $spec = $self->{$ATTR_SPEC};
+        my $sk = (length $kind) . q{ } . $kind;
+        my $ss = ($kind eq 'Any' or $kind eq 'Scalar')
+            ? (length $spec) . q{ } . $spec : $spec->which();
+        my $s = "KIND $sk SPEC $ss";
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "$tpwl $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    my $kind = $self->{$ATTR_KIND};
+    my $spec = $self->{$ATTR_SPEC};
+    my $call_args = { 'kind' => $kind,
+        'spec' => ($kind eq 'Any' ? $spec
+            : $kind eq 'Scalar' ? newEntityName({ 'text' => $spec })
+            : $spec->as_ast()) };
+    return $self->_allows_quasi()
+        ? newTypeInvoAQ( $call_args ) : newTypeInvoNQ( $call_args );
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    my $kind = $self->{$ATTR_KIND};
+    my $spec = $self->{$ATTR_SPEC};
+    return $FALSE
+        if $other->{$ATTR_KIND} ne $kind;
+    return ($kind eq 'Any' or $kind eq 'Scalar')
+            ? $other->{$ATTR_SPEC} eq $spec
+        : $spec->equal({ 'other' => $other->{$ATTR_SPEC} });
+}
+
+###########################################################################
+
+sub kind {
+    my ($self) = @_;
+    return $self->{$ATTR_KIND};
+}
+
+sub spec {
+    my ($self) = @_;
+    return $self->{$ATTR_SPEC};
+}
+
+###########################################################################
+
+} # role Muldis::DB::Engine::Example::PhysType::TypeInvo
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::TypeInvoNQ; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::TypeInvo';
+    sub _allows_quasi { return $FALSE; }
+} # class Muldis::DB::Engine::Example::PhysType::TypeInvoNQ
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::TypeInvoAQ; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::TypeInvo';
+    sub _allows_quasi { return $TRUE; }
+} # class Muldis::DB::Engine::Example::PhysType::TypeInvoAQ
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::TypeDict; # role
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Carp;
+    use Scalar::Util qw(blessed);
+
+    use Muldis::DB::AST qw(newEntityName newTypeDictNQ newTypeDictAQ);
+
+    my $ATTR_MAP = 'map';
+        # A p5 Hash with 0..N elements:
+            # Each Hash key is a p5 text-mode string; an attr name.
+            # Each Hash value is a TypeInvo; an attr declared type.
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($map) = @{$args}{'map'};
+    $self->{$ATTR_MAP} = $map;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    my ($self) = @_;
+    return 'sys.type._TypeDict' . ($self->_allows_quasi() ? 'AQ' : 'NQ');
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $tpwl = '20 sys.type._TypeDict'
+            . ($self->_allows_quasi() ? 'AQ' : 'NQ');
+        my $map = $self->{$ATTR_MAP};
+        my $s = join q{ }, map {
+                my $mk = (length $_) . q{ } . $_;
+                my $mv = $map->{$_}->which();
+                "K $mk V $mv";
+            } sort keys %{$map};
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "$tpwl $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    my $map = $self->{$ATTR_MAP};
+    my $call_args = { 'map' => [map {
+            [newEntityName({ 'text' => $_ }), $map->{$_}->as_ast()],
+        } keys %{$map}] };
+    return $self->_allows_quasi()
+        ? newTypeDictAQ( $call_args ) : newTypeDictNQ( $call_args );
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    my $v1 = $self->{$ATTR_MAP};
+    my $v2 = $other->{$ATTR_MAP};
+    return $FALSE
+        if keys %{$v2} != keys %{$v1};
+    for my $ek (keys %{$v1}) {
+        return $FALSE
+            if !exists $v2->{$ek};
+        return $FALSE
+            if !$v1->{$ek}->equal({ 'other' => $v2->{$ek} });
+    }
+    return $TRUE;
+}
+
+###########################################################################
+
+sub map {
+    my ($self) = @_;
+    return $self->{$ATTR_MAP};
+}
+
+###########################################################################
+
+sub elem_count {
+    my ($self) = @_;
+    return 0 + keys %{$self->{$ATTR_MAP}};
+}
+
+sub elem_exists {
+    my ($self, $args) = @_;
+    my ($elem_name) = @{$args}{'elem_name'};
+    return exists $self->{$ATTR_MAP}->{$elem_name};
+}
+
+sub elem_value {
+    my ($self, $args) = @_;
+    my ($elem_name) = @{$args}{'elem_name'};
+    return $self->{$ATTR_MAP}->{$elem_name};
+}
+
+###########################################################################
+
+} # role Muldis::DB::Engine::Example::PhysType::TypeDict
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::TypeDictNQ; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::TypeDict';
+    sub _allows_quasi { return $FALSE; }
+} # class Muldis::DB::Engine::Example::PhysType::TypeDictNQ
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::TypeDictAQ; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::TypeDict';
+    sub _allows_quasi { return $TRUE; }
+} # class Muldis::DB::Engine::Example::PhysType::TypeDictAQ
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::ValueDict; # role
+    use base 'Muldis::DB::Engine::Example::PhysType::Value';
+
+    use Carp;
+    use Scalar::Util qw(blessed);
+
+    use Muldis::DB::AST qw(newEntityName newExprDict);
+
+    my $ATTR_MAP = 'map';
+
+    my $ATTR_WHICH = 'which';
+
+###########################################################################
+
+sub _build {
+    my ($self, $args) = @_;
+    my ($map) = @{$args}{'map'};
+    $self->{$ATTR_MAP} = $map;
+    return;
+}
+
+###########################################################################
+
+sub root_type {
+    my ($self) = @_;
+    return 'sys.type._ValueDict' . ($self->_allows_quasi() ? 'AQ' : 'NQ');
+}
+
+sub which {
+    my ($self) = @_;
+    if (!defined $self->{$ATTR_WHICH}) {
+        my $tpwl = '20 sys.type._ValueDict'
+            . ($self->_allows_quasi() ? 'AQ' : 'NQ');
+        my $map = $self->{$ATTR_MAP};
+        my $s = join q{ }, map {
+                my $mk = (length $_) . q{ } . $_;
+                my $mv = $map->{$_}->which();
+                "K $mk V $mv";
+            } sort keys %{$map};
+        my $len_s = length $s;
+        $self->{$ATTR_WHICH} = "$tpwl $len_s $s";
+    }
+    return $self->{$ATTR_WHICH};
+}
+
+###########################################################################
+
+sub as_ast {
+    my ($self) = @_;
+    my $map = $self->{$ATTR_MAP};
+    return newExprDict({ 'map' => [map {
+            [newEntityName({ 'text' => $_ }), $map->{$_}->as_ast()],
+        } keys %{$map}] });
+}
+
+###########################################################################
+
+sub _equal {
+    my ($self, $other) = @_;
+    my $v1 = $self->{$ATTR_MAP};
+    my $v2 = $other->{$ATTR_MAP};
+    return $FALSE
+        if keys %{$v2} != keys %{$v1};
+    for my $ek (keys %{$v1}) {
+        return $FALSE
+            if !exists $v2->{$ek};
+        return $FALSE
+            if !$v1->{$ek}->equal({ 'other' => $v2->{$ek} });
+    }
+    return $TRUE;
+}
+
+###########################################################################
+
+sub map {
+    my ($self) = @_;
+    return $self->{$ATTR_MAP};
+}
+
+###########################################################################
+
+sub elem_count {
+    my ($self) = @_;
+    return 0 + keys %{$self->{$ATTR_MAP}};
+}
+
+sub elem_exists {
+    my ($self, $args) = @_;
+    my ($elem_name) = @{$args}{'elem_name'};
+    return exists $self->{$ATTR_MAP}->{$elem_name};
+}
+
+sub elem_value {
+    my ($self, $args) = @_;
+    my ($elem_name) = @{$args}{'elem_name'};
+    return $self->{$ATTR_MAP}->{$elem_name};
+}
+
+###########################################################################
+
+} # role Muldis::DB::Engine::Example::PhysType::ValueDict
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::ValueDictNQ; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::ValueDict';
+    sub _allows_quasi { return $FALSE; }
+} # class Muldis::DB::Engine::Example::PhysType::ValueDictNQ
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB::Engine::Example::PhysType::ValueDictAQ; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::ValueDict';
+    sub _allows_quasi { return $TRUE; }
+} # class Muldis::DB::Engine::Example::PhysType::ValueDictAQ
+
+###########################################################################
+###########################################################################
+
+1; # Magic true value required at end of a reusable file's code.
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Muldis::DB::Engine::Example::PhysType -
+Physical representations of all core data types
+
+=head1 VERSION
+
+This document describes Muldis::DB::Engine::Example::PhysType version 0.0.0
+for Perl 5.
+
+It also describes the same-number versions for Perl 5 of [...].
+
+=head1 DESCRIPTION
+
+This file is used internally by L<Muldis::DB::Engine::Example>; it is not
+intended to be used directly in user code.
+
+It provides physical representations of data types that this Example Engine
+uses to implement Muldis D.  The API of these is expressly not intended to
+match the API that the language itself specifies as possible
+representations for system-defined data types.
+
+Specifically, this file represents the core system-defined data types that
+all Muldis D implementations must have, namely: Bool, Text, Blob, Int,
+Tuple, Relation, and the Cat.* types.
+
+By contrast, the optional data types are given physical representations by
+other files: L<Muldis::DB::Engine::Example::PhysType::Num>,
+L<Muldis::DB::Engine::Example::PhysType::Temporal>,
+L<Muldis::DB::Engine::Example::PhysType::Spatial>.
+
+=head1 BUGS AND LIMITATIONS
+
+This file assumes that it will only be invoked by other components of
+Example, and that they will only be feeding it arguments that are exactly
+what it requires.  For reasons of performance, it does not do any of its
+own basic argument validation, as doing so should be fully redundant.  Any
+invoker should be validating any arguments that it in turn got from user
+code.  Moreover, this file will often take or return values by reference,
+also for performance, and the caller is expected to know that they should
+not be modifying said then-shared values afterwards.
+
+=head1 AUTHOR
+
+Darren Duncan (C<perl@DarrenDuncan.net>)
+
+=head1 LICENSE AND COPYRIGHT
+
+This file is part of the Muldis::DB framework.
+
+Muldis::DB is Copyright © 2002-2007, Darren Duncan.
+
+See the LICENSE AND COPYRIGHT of L<Muldis::DB> for details.
+
+=cut
