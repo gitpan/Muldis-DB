@@ -9,7 +9,7 @@ use Muldis::DB::AST;
 ###########################################################################
 
 { package Muldis::DB; # module
-    our $VERSION = 0.000000;
+    our $VERSION = 0.000001;
     # Note: This given version applies to all of this file's packages.
 
 ###########################################################################
@@ -483,7 +483,7 @@ Full-featured truly relational DBMS in Perl
 
 =head1 VERSION
 
-This document describes Muldis::DB version 0.0.0 for Perl 5.
+This document describes Muldis::DB version 0.0.1 for Perl 5.
 
 It also describes the same-number versions for Perl 5 of
 Muldis::DB::Interface::DBMS ("DBMS"), Muldis::DB::Interface::HostGateVar
@@ -522,25 +522,25 @@ implement it, and so an application written to it should behave identically
 no matter which conforming "Engine" is in use.
 
 Muldis::DB incorporates a complete and uncompromising implementation of
-"The Third Manifesto" (TTM), a formal proposal by Christopher J. Date and
-Hugh Darwen for a solid foundation for data and database management systems
-(DBMSs); like Edgar F. Codd's original papers, TTM can be seen as an
-abstract blueprint for the design of a DBMS and the language interface to
-such a DBMS.  The main web site for TTM is
+"I<The Third Manifesto>" (I<TTM>), a formal proposal by Christopher J. Date
+and Hugh Darwen for a solid foundation for data and database management
+systems (DBMSs); like Edgar F. Codd's original papers, I<TTM> can be seen
+as an abstract blueprint for the design of a DBMS and the language
+interface to such a DBMS.  The main web site for I<TTM> is
 L<http://www.thethirdmanifesto.com/>, and its authors have also written
 several books and papers and taught classes on the subject over the last
 35+ years, along with Codd himself (some are listed in the
 L<Muldis::DB::SeeAlso> documentation file).  Note that the Muldis::DB
 documentation will be focusing mainly on how Muldis::DB itself works, and
-will not spend much time in providing rationale; you can read TTM itself
+will not spend much time in providing rationale; you can read I<TTM> itself
 and various other external documentation for much of that.
 
 The Muldis::DB Native Interface is defined mainly in terms of a new
 high-level programming language named "Muldis D", which is computationally
 complete (and industrial strength) and has fully integrated database
-functionality; this language, which satisfies TTM's definition of a "D"
-language, is described fully in the L<Muldis::DB::Language> documentation
-file that comes with this "Muldis::DB" distribution.
+functionality; this language, which satisfies I<TTM>'s definition of a
+"B<D>" language, is described fully in the L<Muldis::DB::Language>
+documentation file that comes with this "Muldis::DB" distribution.
 
 While it is possible that one could write a self-contained application in
 Muldis D and compile that into its own executable, in practice one would
@@ -580,7 +580,7 @@ is fully capable of modeling anything in the real world accurately, and it
 can support a complete SQL emulation layer on top of it, so that your
 legacy applications can be migrated to use the Muldis::DB DBMS with little
 trouble.  Likewise, emulation layers for any other programming language can
-be supported, such as Tutorial D or XQuery or FoxPro or dBase.
+be supported, such as B<Tutorial D> or XQuery or FoxPro or dBase.
 
 One distinctive feature of a Muldis::DB DBMS (compared to a typical other
 vendor's DBMS) is that data definition statements are structured as
@@ -740,7 +740,7 @@ I<This documentation is pending.>
 This file requires any version of Perl 5.x.y that is at least 5.8.1.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::AST-(0.0.0)|Muldis::DB::AST>.
+L<Muldis::DB::AST-(0.0.1)|Muldis::DB::AST>.
 
 =head1 INCOMPATIBILITIES
 
@@ -796,35 +796,31 @@ Software Foundation; either version 3 of the License, or (at your option)
 any later version.
 
 You should have received copies of the GPL and AGPL as part of the
-Muldis::DB distribution, in the files named "GPL" and "AGPL" respectively;
-if not, see L<http://www.gnu.org/licenses> or write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
-USA.
+Muldis::DB distribution, in the files named "LICENSE/GPL" and
+"LICENSE/AGPL" respectively; if not, see L<http://www.gnu.org/licenses> or
+write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+Floor, Boston, MA 02110-1301 USA.
 
-I<WARNING:  The GPL version 3 and AGPL version 3 are still being drafted;
-the publication of final version of the GPL is expected on Friday, June 29,
-2007; the final publication of the AGPL is currently unknown but should be
-close to the same date; until then, those licenses can not actually be
-used.  So the previous paragraphs just represent what the license of
-Muldis::DB is anticipated to be following an explicit post June 29th
-re-distribution of it by the copyright holder.  If you are seeing
-Muldis::DB prior to that re-distribution, for any reason or in any place,
-then you should consider it as not being licensed at all, and vanilla
-copyright law applies.  That said, Muldis::DB is hereby licensed to you
-under the following proprietary terms:  You may copy, examine, modify, and
-execute Muldis::DB, for the purpose of study or evaluation, during only the
-time period prior to July 1st of 2007, after which time all privileges
-granted to you under this proprietary license expire.  You should then be
-able to acquire a subsequent Muldis::DB release that is licensed with the
-GPL version 3 and/or that disjoint with the AGPL version 3.>
+I<WARNING:  The AGPL version 3 are still being drafted, and its date of
+final publication is unknown, but is presumed to be soon; until then, the
+AGPL can not actually be used.  So the previous paragraphs just represent
+what the license of Muldis::DB is anticipated to be following the AGPL's
+release.  That said, Muldis::DB is for now simply licensed to you under the
+GPL version 3, which is the first choice in the above disjunction.>
 
-Linking Muldis::DB statically or dynamically with other components is
-making a combined work based on Muldis::DB.  Thus, the terms and conditions
-of the GPL or AGPL cover the whole combination.  However, if it is not
-feasible for your combined work to be distributed subject to the GPL or
-AGPL, then the copyright holders of Muldis::DB can provide you a customized
-proprietary license, often at no cost, so that it is still possible for you
-to employ Muldis::DB to meet your needs.
+If it is not feasible for you to employ Muldis::DB subject to the terms of
+the GPL or AGPL, then the copyright holder of Muldis::DB can provide you a
+customized proprietary license, often at no cost, so that it is still
+possible for you to employ Muldis::DB to meet your needs.
+
+I<Note that the copyright holder of Muldis::DB is open to being convinced
+to generally release the work under the GNU Lesser General Public License
+(LGPL), version 3 or later, instead of under the GPL (or alternately, of
+being convinced not to change).  But any argument for or against that
+change should be centred on how the free software community in general, and
+in particular the subset that work with or on Perl or Muldis::DB itself,
+would be benefited more by the change versus staying with the GPL; that is,
+such a change should have strategic value for the community.>
 
 For more information on matters such as licensing, including rationale, see
 also the L<Muldis::DB::Copying> file that comes with Muldis::DB.
@@ -837,7 +833,7 @@ WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE.  However, for an additional fee, the
 copyright holders of Muldis::DB can sell you a warranty for it.
 
-While it is by no means required, the copyright holders of Muldis::DB would
+While it is by no means required, the copyright holder of Muldis::DB would
 appreciate being informed any time you create a modified version of
 Muldis::DB that you are willing to distribute, because that is a practical
 way of suggesting improvements to the standard version.
