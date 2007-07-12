@@ -1,14 +1,85 @@
                                 Muldis::DB
 ---------------------------------------------------------------------------
 
-2007-06-29   Darren Duncan <perl@DarrenDuncan.net>
+2007-07-11   Darren Duncan <perl@DarrenDuncan.net>
 
-    * Muldis::DB version 0.0.1 for Perl 5 is released on CPAN as
-    Muldis-DB-0.0.1.tar.gz.  Muldis::DB version 0.0.1 for Perl 6 is not
+    * Muldis::DB version 0.1.0 for Perl 5 is released on CPAN as
+    Muldis-DB-0.1.0.tar.gz.  Muldis::DB version 0.1.0 for Perl 6 is not
     released at this time, if ever, since it is currently released only as
     part of the Perl6-Pugs project (in its ext/Muldis-DB/ subdirectory),
     which sets its own less frequent release schedule.  The rest of this
     Changes entry refers only to the Perl 5 version.
+
+    * This is a major release that focuses on overhauling or defining part
+    of the Muldis D meta-model / system catalog, which is essential for
+    supporting any user-defined DBMS entities, that is, for doing anything
+    remotely useful.  Said overhaul is expected to be staged over 3-4
+    consecutive releases, of which the current one is essentially just
+    updating documentation; not much code was changed by this release.
+
+    * New code file versions are: DB.pm and AST.pm and Validator.pm and
+    Example.pm 0.1.0.
+
+    * As of this release, all pod-only files now also have version numbers,
+    shown in the VERSION docs by NAME, like code-containing modules do; the
+    initial version numbers are all 0.1.0.  Moreover, from now on, the
+    version number of Language.pod will expressly be kept equal to that of
+    DB.pm, just as AST.pm and Validator.pm and Example.pm are.
+
+    * Muldis D now has 2 representation formats (Concrete Muldis D,
+    Abstract Muldis D) rather than 3 (relations, ASTs, strings).
+
+    * Updated SeeAlso.pod to remove the proposal for a separately
+    distributed Muldis::DB::AST::StringRepr module; instead,
+    Muldis::DB::AST will parse and generate Concrete Muldis D by itself.
+
+    * Rearranged any relevant docs and code so that the most important core
+    scalar types are now in the order [Bool, Int, Blob, Text] and the
+    relation type factory Maybe now appears after Set.
+
+    * Muldis D now has a new scalar data type, "Order", which is an
+    enumeration (like "Bool" is) of 3 values: [Increase, Same, Decrease];
+    it is the result type of any binary comparison operator that underlies
+    the likes of less|greater-than or min|max or sorting operations.  Both
+    the language documentation as well as AST.pm and PhysType.pm were
+    updated to include this type.
+
+    * Muldis D now has the new scalar types "Cat.ShortName" and
+    "Cat.LongName", which replace the also removed "Cat.EntityName" and its
+    (as yet unused) system-defined subtypes.  Only the language docs were
+    updated; any code (eg, AST.pm) still refers to the old types.
+
+    * Split up Language.pod 6 ways, into itself and
+    Language/(Core|Catalog).pod and
+    Language/Ext/(Num|Temporal|Spatial).pod.  For the most part, the only
+    initial content of the 5 new files are corresponding portions of what
+    used to be the SYSTEM-DEFINED DATA TYPES and (actually empty)
+    SYSTEM-DEFINED ROUTINES main documentation sections of Language.pod,
+    but that the CATALOGS main section was also moved to Catalog.pod;
+    Language.pod retained all the other documentation sections that it
+    previously had.  (Language.pod retained about 75% of its previous
+    content; about 25% was moved out.)
+
+    * Further updated the 5 language files with type definitions, to update
+    some definitions, and also to add a small TYPE SUMMARY main doc section
+    to each file.
+
+    * Updated Core.pod to add several main doc sections that have an
+    initial complement of system-defined routines.  In particular, the
+    equal|not_equal|assign routines that all types have are now defined,
+    and all the common boolean and integer operators were added, and some
+    converter routines such as int-from-text et al, were all added.  Many
+    other operator definitions are pending, especially the relational ones.
+
+    * Added new file lib/Muldis/DB/Language/Grammar.pod, which describes
+    Concrete Muldis D details that aren't applicable to Abstract Muldis D.
+
+2007-06-29   Darren Duncan <perl@DarrenDuncan.net>
+
+    * Muldis::DB version 0.0.1 for Perl 5 is released on CPAN as
+    Muldis-DB-0.0.1.tar.gz.  Muldis::DB version 0.0.1 for Perl 6 is not
+    released at all.  The rest of this Changes entry refers only to the
+    Perl 5 version.
 
     * New code file versions are: DB.pm and AST.pm and Validator.pm and
     Example.pm 0.0.1.

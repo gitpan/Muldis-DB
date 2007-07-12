@@ -9,18 +9,18 @@ use Muldis::DB;
 ###########################################################################
 
 { package Muldis::DB::Validator; # module
-    our $VERSION = 0.000001;
+    our $VERSION = 0.001000;
 
     use Test::More;
 
-    use Muldis::DB::AST qw(newBoolLit newTextLit newBlobLit newIntLit
-        newTupleSel newQuasiTupleSel newRelationSel newQuasiRelationSel
-        newDefault newTreat newVarInvo newFuncInvo newProcInvo
-        newFuncReturn newProcReturn newEntityName newTypeInvoNQ
+    use Muldis::DB::AST qw(newBoolLit newOrderLit newIntLit newBlobLit
+        newTextLit newTupleSel newQuasiTupleSel newRelationSel
+        newQuasiRelationSel newDefault newTreat newVarInvo newFuncInvo
+        newProcInvo newFuncReturn newProcReturn newEntityName newTypeInvoNQ
         newTypeInvoAQ newTypeDictNQ newTypeDictAQ newExprDict newFuncDecl
-        newProcDecl newHostGateRtn newSetSel newQuasiSetSel newSeqSel
-        newQuasiSeqSel newBagSel newQuasiBagSel newMaybeSel
-        newQuasiMaybeSel);
+        newProcDecl newHostGateRtn newSetSel newQuasiSetSel newMaybeSel
+        newQuasiMaybeSel newSeqSel newQuasiSeqSel newBagSel
+        newQuasiBagSel);
 
 ###########################################################################
 
@@ -347,7 +347,7 @@ A common comprehensive test suite to run against all Engines
 
 =head1 VERSION
 
-This document describes Muldis::DB::Validator version 0.0.1 for Perl 5.
+This document describes Muldis::DB::Validator version 0.1.0 for Perl 5.
 
 =head1 SYNOPSIS
 
@@ -429,7 +429,7 @@ I<This documentation is pending.>
 This file requires any version of Perl 5.x.y that is at least 5.8.1.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::AST-(0.0.1)|Muldis::DB::AST>, L<Muldis::DB-0.0.1|Muldis::DB>.
+L<Muldis::DB::AST-(0.1.0)|Muldis::DB::AST>, L<Muldis::DB-0.1.0|Muldis::DB>.
 
 =head1 INCOMPATIBILITIES
 

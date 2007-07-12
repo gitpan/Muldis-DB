@@ -1,0 +1,192 @@
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+Muldis::DB::Language::Grammar -
+The string representation format of Muldis D
+
+=head1 VERSION
+
+This document is Muldis::DB::Language::Grammar version 0.1.0.
+
+=head1 PREFACE
+
+This document is part of the Muldis D language specification, whose root
+document is L<Muldis::DB::Language>; you should read that root document
+before you read this one, which provides subservient details.
+
+=head1 DESCRIPTION
+
+This document outlines the grammer of I<Concrete Muldis D>.  This grammar
+is extremely simple such that any program or routine is simply a tuple
+literal, which is composed of relation and tuple and scalar literals.
+Whether or not these literals are valid is up to the I<Abstract Muldis D>
+compiler, whose input is the AST resulting from parsing I<Concrete Muldis
+D>.
+
+I<This documentation is pending.>
+
+=head1 GRAMMAR OF CONCRETE MULDIS D
+
+Note that the following is just illustrative and isn't meant to conform to
+any common grammar specifying formats.  It should become formalized later.
+
+    start
+        = literal
+        ;
+
+    literal
+        = bool
+        | order
+        | int
+        | blob
+        | text
+        | short_name
+        | long_name
+        | tuple
+        | relation
+        | set
+        | maybe
+        | seq
+        | bag
+        ;
+
+    bool
+        = q(Bool:Default)
+        | q(Bool:False)
+        | q(Bool:True)
+        ;
+
+    order
+        = q(Order:Default)
+        | q(Order:Increase)
+        | q(Order:Same)
+        | q(Order:Decrease)
+        ;
+
+    int
+        = q(Int:Default)
+        | q(Int:2:') /(0|-?1[0-1]*)/ q(')
+        | q(Int:8:') /(0|-?[1-7][0-7]*)/ q(')
+        | q(Int:10:') /(0|-?[1-9][0-9]*)/ q(')
+        | q(Int:16:') /(0|-?[1-9A-F][0-9A-F]*)/ q(')
+        ;
+
+    blob
+        = q(Blob:Default)
+        | q(Blob:2:') /[0-1]*/ q(')
+        | q(Blob:16:') /[0-9A-F]*/ q(')
+        ;
+
+    text
+        = q(Text:Default)
+        | q(Text:') text_data q(')
+        ;
+
+    text_data
+        = /(\\b|\\p|\\s|\\d|[^\\.'"])*/
+        ;
+
+    short_name
+        = q(ShortName:Default)
+        | /[\w_]+/
+        | q(") text_data q(")
+        ;
+
+    long_name
+        = q(LongName:Default)
+        | /[\w_]+/ long_name_e1
+        | q(") text_data long_name_e2 q(")
+        ;
+
+    long_name_e1
+        = q(.) /[\w_]+/
+        | q(.) /[\w_]+/ long_name_e1
+        ;
+
+    long_name_e2
+        = q(.) text_data
+        | q(.) text_data long_name_e2
+        ;
+
+    tuple
+        = q(Tuple:Default)
+        | q(Tuple:A0)
+        | q(Tuple:{) ws heading ws q(})
+        | q(Tuple:{) ws heading list_sep tuple_body ws q(})
+        ;
+
+    relation
+        = q(Relation:Default)
+        | q(Relation:A0T0)
+        | q(Relation:A0T1)
+        | q(Relation:{) ws heading list_sep relation_body ws q(})
+        ;
+
+    set
+        = q(Set:Default)
+        | q(Set:{) ws type_invo list_sep set_body ws q(})
+        ;
+
+    maybe
+        = q(Maybe:Default)
+        | q(Maybe:{) ws type_invo list_sep maybe_body ws q(})
+        ;
+
+    seq
+        = q(Seq:Default)
+        | q(Seq:{) ws type_invo list_sep seq_body ws q(})
+        ;
+
+    bag
+        = q(Bag:Default)
+        | q(Bag:{) ws type_invo list_sep bag_body ws q(})
+        ;
+
+    ws
+        = /\S+/
+        ;
+
+    list_sep
+        = q(,) ws
+        ;
+
+    heading
+        = ...
+
+    type_invo
+        = ...
+
+    tuple_body
+        = ...
+
+    relation_body
+        = ...
+
+I<This documentation is pending.>
+
+=head1 SEE ALSO
+
+Go to L<Muldis::DB> for the majority of distribution-internal references,
+and L<Muldis::DB::SeeAlso> for the majority of distribution-external
+references.
+
+=head1 AUTHOR
+
+Darren Duncan (C<perl@DarrenDuncan.net>)
+
+=head1 LICENSE AND COPYRIGHT
+
+This file is part of the Muldis::DB framework.
+
+Muldis::DB is Copyright © 2002-2007, Darren Duncan.
+
+See the LICENSE AND COPYRIGHT of L<Muldis::DB> for details.
+
+=head1 ACKNOWLEDGEMENTS
+
+The ACKNOWLEDGEMENTS in L<Muldis::DB> apply to this file too.
+
+=cut

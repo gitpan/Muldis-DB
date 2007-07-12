@@ -7,15 +7,16 @@ use warnings FATAL => 'all';
 ###########################################################################
 
 { package Muldis::DB::Engine::Example::Operators; # module
-    our $VERSION = 0.000000;
+    our $VERSION = 0.001000;
 
     use bigint; # this is experimental
 
     use Carp;
 
-    use Muldis::DB::Engine::Example::PhysType qw(ptBool ptText ptBlob ptInt
-        ptTuple ptQuasiTuple ptRelation ptQuasiRelation ptTypeInvoNQ
-        ptTypeInvoAQ ptTypeDictNQ ptTypeDictAQ ptValueDictNQ ptTypeDictAQ);
+    use Muldis::DB::Engine::Example::PhysType qw(ptBool ptOrder ptInt
+        ptBlob ptText ptTuple ptQuasiTuple ptRelation ptQuasiRelation
+        ptTypeInvoNQ ptTypeInvoAQ ptTypeDictNQ ptTypeDictAQ ptValueDictNQ
+        ptTypeDictAQ);
 
     my $OPS = { # Hash
 
@@ -24,10 +25,7 @@ use warnings FATAL => 'all';
 ## sys.type.Bool ##
 
 
-## sys.type.Text ##
-
-
-## sys.type.Blob ##
+## sys.type.Order ##
 
 
 ## sys.type.Int ##
@@ -114,6 +112,12 @@ use warnings FATAL => 'all';
     return ptInt({ 'v' => $radix->v() ** $exponent->v() });
 },
 
+## sys.type.Blob ##
+
+
+## sys.type.Text ##
+
+
 ## sys.type.Tuple ##
 
 
@@ -148,7 +152,7 @@ Implementations of all core Muldis D system-defined operators
 =head1 VERSION
 
 This document describes Muldis::DB::Engine::Example::Operators version
-0.0.0 for Perl 5.
+0.1.0 for Perl 5.
 
 =head1 DESCRIPTION
 
