@@ -3,6 +3,8 @@ use utf8;
 use strict;
 use warnings FATAL => 'all';
 
+use Muldis::DB::Literal;
+
 ###########################################################################
 ###########################################################################
 
@@ -19,7 +21,7 @@ my $EMPTY_STR = q{};
 ###########################################################################
 
 { package Muldis::DB::Engine::Example::PhysType; # module
-    our $VERSION = 0.001000;
+    our $VERSION = 0.002000;
     # Note: This given version applies to all of this file's packages.
 
     use base 'Exporter';
@@ -27,9 +29,9 @@ my $EMPTY_STR = q{};
         ptBool ptOrder ptInt ptBlob ptText
         ptTuple ptQuasiTuple
         ptRelation ptQuasiRelation
-        ptTypeInvoNQ ptTypeInvoAQ
-        ptTypeDictNQ ptTypeDictAQ
-        ptValueDictNQ ptTypeDictAQ
+        ptTypeInvo ptQuasiTypeInvo
+        ptTypeDict ptQuasiTypeDict
+        ptValueDict ptQuasiTypeDict
     );
 
 ###########################################################################
@@ -92,45 +94,45 @@ sub ptQuasiRelation {
         'heading' => $heading, 'body' => $body });
 }
 
-sub ptTypeInvoNQ {
+sub ptTypeInvo {
     my ($args) = @_;
     my ($kind, $spec) = @{$args}{'kind', 'spec'};
-    return Muldis::DB::Engine::Example::PhysType::TypeInvoNQ->new({
+    return Muldis::DB::Engine::Example::PhysType::TypeInvo->new({
         'kind' => $kind, 'spec' => $spec });
 }
 
-sub ptTypeInvoAQ {
+sub ptQuasiTypeInvo {
     my ($args) = @_;
     my ($kind, $spec) = @{$args}{'kind', 'spec'};
-    return Muldis::DB::Engine::Example::PhysType::TypeInvoAQ->new({
+    return Muldis::DB::Engine::Example::PhysType::QuasiTypeInvo->new({
         'kind' => $kind, 'spec' => $spec });
 }
 
-sub ptTypeDictNQ {
+sub ptTypeDict {
     my ($args) = @_;
     my ($map) = @{$args}{'map'};
-    return Muldis::DB::Engine::Example::PhysType::TypeDictNQ->new({
+    return Muldis::DB::Engine::Example::PhysType::TypeDict->new({
         'map' => $map });
 }
 
-sub ptTypeDictAQ {
+sub ptQuasiTypeDict {
     my ($args) = @_;
     my ($map) = @{$args}{'map'};
-    return Muldis::DB::Engine::Example::PhysType::TypeDictAQ->new({
+    return Muldis::DB::Engine::Example::PhysType::QuasiTypeDict->new({
         'map' => $map });
 }
 
-sub ptValueDictNQ {
+sub ptValueDict {
     my ($args) = @_;
     my ($map) = @{$args}{'map'};
-    return Muldis::DB::Engine::Example::PhysType::ValueDictNQ->new({
+    return Muldis::DB::Engine::Example::PhysType::ValueDict->new({
         'map' => $map });
 }
 
-sub ptValueDictAQ {
+sub ptQuasiValueDict {
     my ($args) = @_;
     my ($map) = @{$args}{'map'};
-    return Muldis::DB::Engine::Example::PhysType::ValueDictAQ->new({
+    return Muldis::DB::Engine::Example::PhysType::QuasiValueDict->new({
         'map' => $map });
 }
 
@@ -249,8 +251,6 @@ sub _equal {
 { package Muldis::DB::Engine::Example::PhysType::Bool; # class
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
 
-    use Muldis::DB::AST qw(newBoolLit);
-
     my $ATTR_V = 'v';
         # A p5 Scalar that equals $BOOL_FALSE|$BOOL_TRUE.
 
@@ -285,7 +285,7 @@ sub which {
 
 sub as_ast {
     my ($self) = @_;
-    return newBoolLit({ 'v' => $self->{$ATTR_V} });
+    return Muldis::DB::Literal::Bool->new({ 'v' => $self->{$ATTR_V} });
 }
 
 ###########################################################################
@@ -311,8 +311,6 @@ sub v {
 
 { package Muldis::DB::Engine::Example::PhysType::Order; # class
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
-
-    use Muldis::DB::AST qw(newOrderLit);
 
     my $ATTR_V = 'v';
         # A p5 Scalar that equals $ORDER_(INCREASE|SAME|DECREASE).
@@ -348,7 +346,7 @@ sub which {
 
 sub as_ast {
     my ($self) = @_;
-    return newOrderLit({ 'v' => $self->{$ATTR_V} });
+    return Muldis::DB::Literal::Order->new({ 'v' => $self->{$ATTR_V} });
 }
 
 ###########################################################################
@@ -374,8 +372,6 @@ sub v {
 
 { package Muldis::DB::Engine::Example::PhysType::Int; # class
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
-
-    use Muldis::DB::AST qw(newIntLit);
 
     use bigint; # this is experimental
 
@@ -413,7 +409,7 @@ sub which {
 
 sub as_ast {
     my ($self) = @_;
-    return newIntLit({ 'v' => $self->{$ATTR_V} });
+    return Muldis::DB::Literal::Int->new({ 'v' => $self->{$ATTR_V} });
 }
 
 ###########################################################################
@@ -439,8 +435,6 @@ sub v {
 
 { package Muldis::DB::Engine::Example::PhysType::Blob; # class
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
-
-    use Muldis::DB::AST qw(newBlobLit);
 
     my $ATTR_V = 'v';
         # A p5 Scalar that is a byte-mode string; it has false utf8 flag.
@@ -476,7 +470,7 @@ sub which {
 
 sub as_ast {
     my ($self) = @_;
-    return newBlobLit({ 'v' => $self->{$ATTR_V} });
+    return Muldis::DB::Literal::Blob->new({ 'v' => $self->{$ATTR_V} });
 }
 
 ###########################################################################
@@ -502,8 +496,6 @@ sub v {
 
 { package Muldis::DB::Engine::Example::PhysType::Text; # class
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
-
-    use Muldis::DB::AST qw(newTextLit);
 
     my $ATTR_V = 'v';
         # A p5 Scalar that is a text-mode string;
@@ -540,7 +532,7 @@ sub which {
 
 sub as_ast {
     my ($self) = @_;
-    return newTextLit({ 'v' => $self->{$ATTR_V} });
+    return Muldis::DB::Literal::Text->new({ 'v' => $self->{$ATTR_V} });
 }
 
 ###########################################################################
@@ -569,8 +561,6 @@ sub v {
 
     use Carp;
     use Scalar::Util qw(blessed);
-
-    use Muldis::DB::AST qw(newTupleSel newQuasiTupleSel);
 
     my $ATTR_HEADING = 'heading';
     my $ATTR_BODY    = 'body';
@@ -615,7 +605,7 @@ sub as_ast {
     my $call_args = { 'heading' => $self->{$ATTR_HEADING}->as_ast(),
         'body' => $self->{$ATTR_BODY}->as_ast() };
     return $self->_allows_quasi()
-        ? newQuasiTupleSel( $call_args ) : newTupleSel( $call_args );
+        ? Muldis::DB::Literal::QuasiTuple->new( $call_args ) : Muldis::DB::Literal::Tuple->new( $call_args );
 }
 
 ###########################################################################
@@ -696,8 +686,6 @@ sub attr_value {
     use Carp;
     use Scalar::Util qw(blessed);
 
-    use Muldis::DB::AST qw(newRelationSel newQuasiRelationSel);
-
     my $ATTR_HEADING      = 'heading';
     my $ATTR_BODY         = 'body';
     my $ATTR_KEY_OVER_ALL = 'key_over_all';
@@ -748,7 +736,7 @@ sub as_ast {
     my $call_args = { 'heading' => $self->{$ATTR_HEADING}->as_ast(),
         'body' => [map { $_->as_ast() } @{$self->{$ATTR_BODY}}] };
     return $self->_allows_quasi()
-        ? newQuasiRelationSel( $call_args ) : newRelationSel( $call_args );
+        ? Muldis::DB::Literal::QuasiRelation->new( $call_args ) : Muldis::DB::Literal::Relation->new( $call_args );
 }
 
 ###########################################################################
@@ -840,13 +828,11 @@ sub attr_values {
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::TypeInvo; # role
+{ package Muldis::DB::Engine::Example::PhysType::_TypeInvo; # role
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
 
     use Carp;
     use Scalar::Util qw(blessed);
-
-    use Muldis::DB::AST qw(newEntityName newTypeInvoNQ newTypeInvoAQ);
 
     my $ATTR_KIND = 'kind';
     my $ATTR_SPEC = 'spec';
@@ -895,10 +881,10 @@ sub as_ast {
     my $spec = $self->{$ATTR_SPEC};
     my $call_args = { 'kind' => $kind,
         'spec' => ($kind eq 'Any' ? $spec
-            : $kind eq 'Scalar' ? newEntityName({ 'text' => $spec })
+            : $kind eq 'Scalar' ? Muldis::DB::Literal::EntityName->new({ 'text' => $spec })
             : $spec->as_ast()) };
     return $self->_allows_quasi()
-        ? newTypeInvoAQ( $call_args ) : newTypeInvoNQ( $call_args );
+        ? Muldis::DB::Literal::QuasiTypeInvo->new( $call_args ) : Muldis::DB::Literal::TypeInvo->new( $call_args );
 }
 
 ###########################################################################
@@ -928,34 +914,32 @@ sub spec {
 
 ###########################################################################
 
-} # role Muldis::DB::Engine::Example::PhysType::TypeInvo
+} # role Muldis::DB::Engine::Example::PhysType::_TypeInvo
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::TypeInvoNQ; # class
-    use base 'Muldis::DB::Engine::Example::PhysType::TypeInvo';
+{ package Muldis::DB::Engine::Example::PhysType::TypeInvo; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_TypeInvo';
     sub _allows_quasi { return $BOOL_FALSE; }
-} # class Muldis::DB::Engine::Example::PhysType::TypeInvoNQ
+} # class Muldis::DB::Engine::Example::PhysType::TypeInvo
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::TypeInvoAQ; # class
-    use base 'Muldis::DB::Engine::Example::PhysType::TypeInvo';
+{ package Muldis::DB::Engine::Example::PhysType::QuasiTypeInvo; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_TypeInvo';
     sub _allows_quasi { return $BOOL_TRUE; }
-} # class Muldis::DB::Engine::Example::PhysType::TypeInvoAQ
+} # class Muldis::DB::Engine::Example::PhysType::QuasiTypeInvo
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::TypeDict; # role
+{ package Muldis::DB::Engine::Example::PhysType::_TypeDict; # role
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
 
     use Carp;
     use Scalar::Util qw(blessed);
-
-    use Muldis::DB::AST qw(newEntityName newTypeDictNQ newTypeDictAQ);
 
     my $ATTR_MAP = 'map';
         # A p5 Hash with 0..N elements:
@@ -1003,10 +987,10 @@ sub as_ast {
     my ($self) = @_;
     my $map = $self->{$ATTR_MAP};
     my $call_args = { 'map' => [map {
-            [newEntityName({ 'text' => $_ }), $map->{$_}->as_ast()],
+            [Muldis::DB::Literal::EntityName->new({ 'text' => $_ }), $map->{$_}->as_ast()],
         } keys %{$map}] };
     return $self->_allows_quasi()
-        ? newTypeDictAQ( $call_args ) : newTypeDictNQ( $call_args );
+        ? Muldis::DB::Literal::QuasiTypeDict->new( $call_args ) : Muldis::DB::Literal::TypeDict->new( $call_args );
 }
 
 ###########################################################################
@@ -1054,34 +1038,32 @@ sub elem_value {
 
 ###########################################################################
 
-} # role Muldis::DB::Engine::Example::PhysType::TypeDict
+} # role Muldis::DB::Engine::Example::PhysType::_TypeDict
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::TypeDictNQ; # class
-    use base 'Muldis::DB::Engine::Example::PhysType::TypeDict';
+{ package Muldis::DB::Engine::Example::PhysType::TypeDict; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_TypeDict';
     sub _allows_quasi { return $BOOL_FALSE; }
-} # class Muldis::DB::Engine::Example::PhysType::TypeDictNQ
+} # class Muldis::DB::Engine::Example::PhysType::TypeDict
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::TypeDictAQ; # class
-    use base 'Muldis::DB::Engine::Example::PhysType::TypeDict';
+{ package Muldis::DB::Engine::Example::PhysType::QuasiTypeDict; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_TypeDict';
     sub _allows_quasi { return $BOOL_TRUE; }
-} # class Muldis::DB::Engine::Example::PhysType::TypeDictAQ
+} # class Muldis::DB::Engine::Example::PhysType::QuasiTypeDict
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::ValueDict; # role
+{ package Muldis::DB::Engine::Example::PhysType::_ValueDict; # role
     use base 'Muldis::DB::Engine::Example::PhysType::Value';
 
     use Carp;
     use Scalar::Util qw(blessed);
-
-    use Muldis::DB::AST qw(newEntityName newExprDict);
 
     my $ATTR_MAP = 'map';
 
@@ -1125,8 +1107,8 @@ sub which {
 sub as_ast {
     my ($self) = @_;
     my $map = $self->{$ATTR_MAP};
-    return newExprDict({ 'map' => [map {
-            [newEntityName({ 'text' => $_ }), $map->{$_}->as_ast()],
+    return Muldis::DB::Literal::_ExprDict->new({ 'map' => [map {
+            [Muldis::DB::Literal::EntityName->new({ 'text' => $_ }), $map->{$_}->as_ast()],
         } keys %{$map}] });
 }
 
@@ -1175,23 +1157,23 @@ sub elem_value {
 
 ###########################################################################
 
-} # role Muldis::DB::Engine::Example::PhysType::ValueDict
+} # role Muldis::DB::Engine::Example::PhysType::_ValueDict
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::ValueDictNQ; # class
-    use base 'Muldis::DB::Engine::Example::PhysType::ValueDict';
+{ package Muldis::DB::Engine::Example::PhysType::ValueDict; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_ValueDict';
     sub _allows_quasi { return $BOOL_FALSE; }
-} # class Muldis::DB::Engine::Example::PhysType::ValueDictNQ
+} # class Muldis::DB::Engine::Example::PhysType::ValueDict
 
 ###########################################################################
 ###########################################################################
 
-{ package Muldis::DB::Engine::Example::PhysType::ValueDictAQ; # class
-    use base 'Muldis::DB::Engine::Example::PhysType::ValueDict';
+{ package Muldis::DB::Engine::Example::PhysType::QuasiValueDict; # class
+    use base 'Muldis::DB::Engine::Example::PhysType::_ValueDict';
     sub _allows_quasi { return $BOOL_TRUE; }
-} # class Muldis::DB::Engine::Example::PhysType::ValueDictAQ
+} # class Muldis::DB::Engine::Example::PhysType::QuasiValueDict
 
 ###########################################################################
 ###########################################################################
@@ -1210,7 +1192,7 @@ Physical representations of all core data types
 
 =head1 VERSION
 
-This document describes Muldis::DB::Engine::Example::PhysType version 0.1.0
+This document describes Muldis::DB::Engine::Example::PhysType version 0.2.0
 for Perl 5.
 
 It also describes the same-number versions for Perl 5 of [...].

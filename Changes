@@ -1,14 +1,74 @@
                                 Muldis::DB
 ---------------------------------------------------------------------------
 
-2007-07-11   Darren Duncan <perl@DarrenDuncan.net>
+2007-07-20   Darren Duncan <perl@DarrenDuncan.net>
 
-    * Muldis::DB version 0.1.0 for Perl 5 is released on CPAN as
-    Muldis-DB-0.1.0.tar.gz.  Muldis::DB version 0.1.0 for Perl 6 is not
+    * Muldis::DB version 0.2.0 for Perl 5 is released on CPAN as
+    Muldis-DB-0.2.0.tar.gz.  Muldis::DB version 0.2.0 for Perl 6 is not
     released at this time, if ever, since it is currently released only as
     part of the Perl6-Pugs project (in its ext/Muldis-DB/ subdirectory),
     which sets its own less frequent release schedule.  The rest of this
     Changes entry refers only to the Perl 5 version.
+
+    * Renamed AST.pm to Literal.pm, and split up DB.pm into DB.pod and
+    Interface.pm.  Any code that used to be spelled Muldis::DB::AST or
+    Muldis::DB is now spelled Muldis::DB::Literal and
+    Muldis::DB::Interface.  Following these changes, lib/Muldis/DB.pod is
+    still the "main" file for documentation purposes, but for code
+    purposes, both Literal.pm and Interface.pm are now used directly.
+
+    * New file versions are: DB.pod and Literal.pm and Interface.pm and
+    Language.pod and Validator.pm and Example.pm 0.2.0.
+
+    * Updated the TRANSACTIONS AND CONCURRENCY section of Language.pod in
+    regards to how the scope of explicit transactions is specified, and
+    where implicit transactions occur.  Also, Muldis D now no longer has
+    language for non-scope-attached transactions, and any concept of
+    distinct transaction initiation or termination statements will be
+    hoisted to the host language (presumably as methods of ::DBMS objects).
+
+    * Updated Core.pod to add the scalar type 'PInt2_36', and to replace
+    the pseudo-type 'Any' with the pseudo-type 'Some.Universal', and added
+    'Some.Ordinal'.
+
+    * Updated Grammar.pod concerning integer literals; they can be
+    represented with any of base-2 thru base-36 now.
+
+    * Updated Grammar.pod and Core.pod concerning enumerated types, such as
+    Bool and Order; individual values are now specified using eg
+    [Bool:true] rather than [Bool.True], which then makes them more like
+    literals of other simple types, and less like data type names.
+
+    * Updated Core.pod to add definitions for the generic operators common
+    to all ordinal types: compare, reverse_compare, is_increase,
+    is_decrease, min, max.  Added 'reverse' operator for the Order type.
+    Added or replaced a bunch of operators for the Int|Blob|Text types.
+    Other small changes.
+
+    * Updated Core.pod to add an initial complement of common tuple and
+    relation operators (such as project, join, union), perhaps most of
+    them.  These are a large part of what makes Muldis D a relational
+    language at all.
+
+    * Updated Catalog.pod to add new core data types: Cat.ShortNameSet,
+    Cat.AttrRenameMap.
+
+    * Updated Literal.pm to remove all exported functions that trivially
+    wrap an object constructor, updated any uses in other files to call
+    constructors directly.  Also renamed ::(Bool|Order|Int|Blob|Text)Lit to
+    remove the "Lit", and ::(|Quasi)(Tuple|Relation)Sel to remove the
+    "Sel", and likewise updated any refs to said.
+
+    * In both Literal.pm and PhysType.pm, renamed any classes named
+    (TypeInvo|TypeDict|ExprDict|ValueDict)(|NQ|AQ) to (_\1|\1|Quasi\1)
+    respectively, and refs to said.
+
+2007-07-11   Darren Duncan <perl@DarrenDuncan.net>
+
+    * Muldis::DB version 0.1.0 for Perl 5 is released on CPAN as
+    Muldis-DB-0.1.0.tar.gz.  Muldis::DB version 0.1.0 for Perl 6 is not
+    released at all.  The rest of this Changes entry refers only to the
+    Perl 5 version.
 
     * This is a major release that focuses on overhauling or defining part
     of the Muldis D meta-model / system catalog, which is essential for

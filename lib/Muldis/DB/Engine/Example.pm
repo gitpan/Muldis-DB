@@ -3,14 +3,14 @@ use utf8;
 use strict;
 use warnings FATAL => 'all';
 
-use Muldis::DB;
+use Muldis::DB::Interface;
 use Muldis::DB::Engine::Example::Operators;
 
 ###########################################################################
 ###########################################################################
 
 { package Muldis::DB::Engine::Example; # class
-    our $VERSION = 0.001000;
+    our $VERSION = 0.002000;
     # Note: This given version applies to all of this file's packages.
 
     use base 'Muldis::DB::Engine::Role';
@@ -82,8 +82,6 @@ sub prepare {
 
     use Carp;
 
-    use Muldis::DB::AST qw(newBoolLit);
-
     my $ATTR_DBMS      = 'dbms';
     my $ATTR_DECL_TYPE = 'decl_type';
     my $ATTR_VAL_AST   = 'val_ast';
@@ -103,7 +101,7 @@ sub _build {
 
     $self->{$ATTR_DBMS}      = $dbms;
     $self->{$ATTR_DECL_TYPE} = $decl_type;
-    $self->{$ATTR_VAL_AST}   = newBoolLit({ 'v' => (1 == 0) });
+    $self->{$ATTR_VAL_AST}   = Muldis::DB::Literal::Bool->new({ 'v' => (1 == 0) });
         # TODO: make default val of decl type
 
     return;
@@ -218,7 +216,7 @@ Self-contained reference implementation of a Muldis::DB Engine
 
 =head1 VERSION
 
-This document describes Muldis::DB::Engine::Example version 0.1.0 for Perl
+This document describes Muldis::DB::Engine::Example version 0.2.0 for Perl
 5.
 
 =head1 SYNOPSIS
@@ -247,7 +245,7 @@ I<This documentation is pending.>
 This file requires any version of Perl 5.x.y that is at least 5.8.1.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB-0.1.0|Muldis::DB>.
+L<Muldis::DB::Interface-0.2.0|Muldis::DB::Interface>.
 
 =head1 INCOMPATIBILITIES
 

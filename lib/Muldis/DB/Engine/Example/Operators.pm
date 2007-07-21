@@ -7,7 +7,7 @@ use warnings FATAL => 'all';
 ###########################################################################
 
 { package Muldis::DB::Engine::Example::Operators; # module
-    our $VERSION = 0.001000;
+    our $VERSION = 0.002000;
 
     use bigint; # this is experimental
 
@@ -15,8 +15,8 @@ use warnings FATAL => 'all';
 
     use Muldis::DB::Engine::Example::PhysType qw(ptBool ptOrder ptInt
         ptBlob ptText ptTuple ptQuasiTuple ptRelation ptQuasiRelation
-        ptTypeInvoNQ ptTypeInvoAQ ptTypeDictNQ ptTypeDictAQ ptValueDictNQ
-        ptTypeDictAQ);
+        ptTypeInvo ptQuasiTypeInvo ptTypeDict ptQuasiTypeDict ptValueDict
+        ptQuasiTypeDict);
 
     my $OPS = { # Hash
 
@@ -152,7 +152,7 @@ Implementations of all core Muldis D system-defined operators
 =head1 VERSION
 
 This document describes Muldis::DB::Engine::Example::Operators version
-0.1.0 for Perl 5.
+0.2.0 for Perl 5.
 
 =head1 DESCRIPTION
 
