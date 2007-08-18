@@ -17,10 +17,10 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME' => 'Muldis::DB',
-    'VERSION' => '0.3.0',
+    'VERSION' => '0.3.1',
     'ABSTRACT' => 'Full-featured truly relational DBMS in Perl',
     'AUTHOR' => 'Darren Duncan <perl@DarrenDuncan.net>',
-#    'LICENSE' => 'gpl',
+    'LICENSE' => 'lgpl',
     'PREREQ_PM' => {
     },
 );

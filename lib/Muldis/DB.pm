@@ -1,3 +1,23 @@
+use 5.008001;
+use utf8;
+use strict;
+use warnings FATAL => 'all';
+
+###########################################################################
+###########################################################################
+
+{ package Muldis::DB; # package
+    our $VERSION = 0.003001;
+    # Note that Perl code only exists at all in this file in order to help
+    # the CPAN indexer handle the distribution properly.
+} # package Muldis::DB
+
+###########################################################################
+###########################################################################
+
+1; # Magic true value required at end of a reusable file's code.
+__END__
+
 =pod
 
 =encoding utf8
@@ -9,7 +29,7 @@ Full-featured truly relational DBMS in Perl
 
 =head1 VERSION
 
-This document is Muldis::DB version 0.3.0.
+This document is Muldis::DB version 0.3.1.
 
 =head1 PREFACE
 
@@ -199,61 +219,51 @@ Darren Duncan (C<perl@DarrenDuncan.net>)
 
 =head1 LICENSE AND COPYRIGHT
 
-This file is part of the Muldis::DB framework.
+This file is part of the Muldis DB framework.
 
-Muldis::DB is Copyright © 2002-2007, Darren Duncan.  All rights reserved.
+Muldis DB is Copyright © 2002-2007, Darren Duncan.  All rights reserved.
 
-Muldis::DB is free software; you can redistribute it and/or modify it under
-the terms of either:
+Muldis DB is free software.  With respect to just the component file
+"lib/Muldis/DB.pm", you can redistribute it and/or modify it under the
+terms of the GNU Lesser General Public License (LGPL) as published by the
+Free Software Foundation (L<http://www.fsf.org/>); either version 3 of the
+License, or (at your option) any later version.  With respect to all other
+component files, you can redistribute it and/or modify it under the terms
+of the GNU General Public License (GPL) as published by the Free Software
+Foundation; either version 3 of the License, or any later version.  You
+should have received copies of the LGPL and GPL as part of the Muldis DB
+distribution, in the files named "LICENSE/LGPL" and "LICENSE/GPL"; if not,
+see L<http://www.gnu.org/licenses/>.
 
-a) the GNU General Public License (GPL) as published by the Free Software
-Foundation (L<http://www.fsf.org/>); either version 3 of the License, or
-(at your option) any later version, or
+I<Note that the distribution files Literal.pm and Interface.pm will be
+going away soon, some of their functionality being moved into DB.pm and or
+Example.pm.  Therefore, the above license terms mean that the LGPL will
+soon cover just the tiny part of this distribution that is mandatory to use
+the Muldis DB framework at all (because it defines the role/interface that
+every Engine does).  Furthermore, the majority part of this distribution
+that is covered by the GPL will soon not be mandatory, but optional, when
+using the framework.>
 
-b) the GNU Affero General Public License (AGPL) as published by the Free
-Software Foundation; either version 3 of the License, or (at your option)
-any later version.
-
-You should have received copies of the GPL and AGPL as part of the
-Muldis::DB distribution, in the files named "LICENSE/GPL" and
-"LICENSE/AGPL" respectively; if not, see L<http://www.gnu.org/licenses/>.
-
-I<WARNING:  The AGPL version 3 are still being drafted, and its date of
-final publication is unknown, but is presumed to be soon; until then, the
-AGPL can not actually be used.  So the previous paragraphs just represent
-what the license of Muldis::DB is anticipated to be following the AGPL's
-release.  That said, Muldis::DB is for now simply licensed to you under the
-GPL version 3, which is the first choice in the above disjunction.>
-
-If it is not feasible for you to employ Muldis::DB subject to the terms of
-the GPL or AGPL, then the copyright holder of Muldis::DB can provide you a
+If it is not feasible for you to employ Muldis DB subject to the terms of
+the LGPL+GPL, then the copyright holder of Muldis DB can provide you a
 customized proprietary license, often at no cost, so that it is still
-possible for you to employ Muldis::DB to meet your needs.
-
-I<Note that the copyright holder of Muldis::DB is open to being convinced
-to generally release the work under the GNU Lesser General Public License
-(LGPL), version 3 or later, instead of under the GPL (or alternately, of
-being convinced not to change).  But any argument for or against that
-change should be centred on how the free software community in general, and
-in particular the subset that work with or on Perl or Muldis::DB itself,
-would be benefited more by the change versus staying with the GPL; that is,
-such a change should have strategic value for the community.>
+possible for you to employ Muldis DB to meet your needs.
 
 For more information on matters such as licensing, including rationale, see
-also the L<Muldis::DB::Copying> file that comes with Muldis::DB.
+also the L<Muldis::DB::Copying> file that comes with Muldis DB.
 
-Any versions of Muldis::DB that you modify and distribute must carry
+Any versions of Muldis DB that you modify and distribute must carry
 prominent notices stating that you changed the files and the date of any
 changes, in addition to preserving this original copyright notice and other
-credits.  Muldis::DB is distributed in the hope that it will be useful, but
+credits.  Muldis DB is distributed in the hope that it will be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE.  However, for an additional fee, the
-copyright holders of Muldis::DB can sell you a warranty for it.
+copyright holders of Muldis DB can sell you a warranty for it.
 
-While it is by no means required, the copyright holder of Muldis::DB would
-appreciate being informed any time you create a modified version of
-Muldis::DB that you are willing to distribute, because that is a practical
-way of suggesting improvements to the standard version.
+While it is by no means required, the copyright holder of Muldis DB would
+appreciate being informed any time you create a modified version of Muldis
+DB that you are willing to distribute, because that is a practical way of
+suggesting improvements to the standard version.
 
 =head1 ACKNOWLEDGEMENTS
 
