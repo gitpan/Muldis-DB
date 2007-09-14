@@ -1,14 +1,34 @@
                                 Muldis::DB
 ---------------------------------------------------------------------------
 
-2007-08-18   Darren Duncan <perl@DarrenDuncan.net>
+2007-09-14   Darren Duncan <perl@DarrenDuncan.net>
 
-    * Muldis DB version 0.3.1 for Perl 5 is released on CPAN as
-    Muldis-DB-0.3.1.tar.gz.  Muldis DB version 0.3.1 for Perl 6 is not
+    * Muldis DB version 0.3.2 for Perl 5 is released on CPAN as
+    Muldis-DB-0.3.2.tar.gz.  Muldis DB version 0.3.2 for Perl 6 is not
     released at this time, if ever, since it is currently released only as
     part of the Perl6-Pugs project (in its ext/Muldis-DB/ subdirectory),
     which sets its own less frequent release schedule.  The rest of this
     Changes entry refers only to the Perl 5 version.
+
+    * Removed the file Copying.pod; it isn't particularly useful anymore.
+
+    * New file versions are: DB.pm 0.3.2.
+
+    * (DB.pm)  The whole Muldis DB core, that is, all code in this
+    distribution, has been re-licensed under the GNU Lesser General Public
+    License version 3 or later (LGPLv3+).  Also, the current plan is that
+    the LGPLv3+ will be used as the license of many separately distributed
+    Muldis DB extensions started by the same author, such as some
+    implementations over SQL databases, or such as example code in
+    tutorials/cookbooks; or some extensions would be under other
+    GPLv3-compatible licenses.
+
+2007-08-18   Darren Duncan <perl@DarrenDuncan.net>
+
+    * Muldis DB version 0.3.1 for Perl 5 is released on CPAN as
+    Muldis-DB-0.3.1.tar.gz.  Muldis DB version 0.3.1 for Perl 6 is not
+    released at all.  The rest of this Changes entry refers only to the
+    Perl 5 version.
 
     * Renamed DB.pod to DB.pm, and added an empty dummy package declaration
     of Muldis::DB to it, all for the sole purpose of helping the CPAN
