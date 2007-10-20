@@ -9,7 +9,7 @@ use Muldis::DB::Interface;
 ###########################################################################
 
 { package Muldis::DB::Validator; # module
-    our $VERSION = 0.004000;
+    our $VERSION = 0.005000;
 
     use Test::More;
 
@@ -27,7 +27,10 @@ sub main {
 
     # Instantiate a Muldis DB DBMS / virtual machine.
     my $dbms = Muldis::DB::Interface::new_dbms({
-        'engine_name' => $engine_name, 'dbms_config' => $dbms_config });
+        'engine_name' => $engine_name,
+        'exp_ast_lang' => [ 'MuldisD', 'cpan:DUNCAND', '0.8.1' ],
+        'dbms_config' => $dbms_config,
+    });
     does_ok( $dbms, 'Muldis::DB::Interface::DBMS' );
 
     _scenario_foods_suppliers_shipments_v1( $dbms );
@@ -227,7 +230,7 @@ A common comprehensive test suite to run against all Engines
 
 =head1 VERSION
 
-This document describes Muldis::DB::Validator version 0.4.0 for Perl 5.
+This document describes Muldis::DB::Validator version 0.5.0 for Perl 5.
 
 =head1 SYNOPSIS
 
@@ -309,7 +312,7 @@ I<This documentation is pending.>
 This file requires any version of Perl 5.x.y that is at least 5.8.1.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::Interface-0.4.0|Muldis::DB::Interface>.
+L<Muldis::DB::Interface-0.5.0|Muldis::DB::Interface>.
 
 =head1 INCOMPATIBILITIES
 

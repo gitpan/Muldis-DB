@@ -4,22 +4,22 @@ use strict;
 use warnings FATAL => 'all';
 
 use Muldis::DB::Interface;
-use Muldis::DB::Engine::Example::Operators;
 
 ###########################################################################
 ###########################################################################
 
 { package Muldis::DB::Engine::Example; # module
-    our $VERSION = 0.004000;
+    our $VERSION = 0.005000;
     # Note: This given version applies to all of this file's packages.
 
 ###########################################################################
 
 sub new_dbms {
-    my ($class, $args) = @_;
-    my ($dbms_config) = @{$args}{'dbms_config'};
+    my ($args) = @_;
+    my ($exp_ast_lang, $dbms_config)
+        = @{$args}{'exp_ast_lang', 'dbms_config'};
     return Muldis::DB::Engine::Example::Public::DBMS->new({
-        'dbms_config' => $dbms_config });
+        'exp_ast_lang' => $exp_ast_lang, 'dbms_config' => $dbms_config });
 }
 
 ###########################################################################
@@ -37,7 +37,8 @@ sub new_dbms {
     # User-supplied config data for this DBMS object / virtual machine.
     # For the moment, the Example Engine doesn't actually have anything
     # that can be configured in this way, so input $dbms_config is ignored.
-    my $ATTR_DBMS_CONFIG = 'dbms_config';
+    my $ATTR_EXP_AST_LANG = 'exp_ast_lang';
+    my $ATTR_DBMS_CONFIG  = 'dbms_config';
 
     # Lists of user-held objects associated with parts of this DBMS.
     # For each of these, Hash keys are obj .WHERE/addrs, vals the objs.
@@ -61,9 +62,12 @@ sub new {
 
 sub _build {
     my ($self, $args) = @_;
-    my ($dbms_config) = @{$args}{'dbms_config'};
+    my ($exp_ast_lang, $dbms_config)
+        = @{$args}{'exp_ast_lang', 'dbms_config'};
 
-    $self->{$ATTR_DBMS_CONFIG} = $dbms_config;
+    # TODO: input checks.
+    $self->{$ATTR_EXP_AST_LANG} = [@{$exp_ast_lang}];
+    $self->{$ATTR_DBMS_CONFIG}  = $dbms_config;
 
     $self->{$ATTR_ASSOC_VARS}          = {};
     $self->{$ATTR_ASSOC_FUNC_BINDINGS} = {};
@@ -78,6 +82,20 @@ sub DESTROY {
     my ($self) = @_;
     # TODO: check for active trans and rollback ... or member VM does it.
     # Likewise with closing open files or whatever.
+    return;
+}
+
+###########################################################################
+
+sub fetch_exp_ast_lang {
+    my ($self) = @_;
+    return [@{$self->{$ATTR_EXP_AST_LANG}}];
+}
+
+sub store_exp_ast_lang {
+    my ($self, $args) = @_;
+    my ($lang) = @{$args}{'lang'};
+    $self->{$ATTR_EXP_AST_LANG} = [@{$lang}];
     return;
 }
 
@@ -249,11 +267,10 @@ sub fetch_ast {
     return;
 }
 
-###########################################################################
-
 sub store_ast {
     my ($self, $args) = @_;
     my ($ast) = @{$args}{'ast'};
+    # TODO: input checks.
 #    $self->{$ATTR_VAR} = from_phmd( $ast ); # TODO; or some such
     return;
 }
@@ -313,7 +330,7 @@ Self-contained reference implementation of a Muldis DB Engine
 
 =head1 VERSION
 
-This document describes Muldis::DB::Engine::Example version 0.4.0 for Perl
+This document describes Muldis::DB::Engine::Example version 0.5.0 for Perl
 5.
 
 It also describes the same-number versions for Perl 5 of
@@ -368,13 +385,7 @@ I<This documentation is pending.>
 This file requires any version of Perl 5.x.y that is at least 5.8.1.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::Interface-0.4.0|Muldis::DB::Interface>.
-
-It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::Engine::Example::PhysType-0.4.0|
-Muldis::DB::Engine::Example::PhysType>,
-L<Muldis::DB::Engine::Example::Operators-0.4.0|
-Muldis::DB::Engine::Example::Operators>.
+L<Muldis::DB::Interface-0.5.0|Muldis::DB::Interface>.
 
 =head1 INCOMPATIBILITIES
 
