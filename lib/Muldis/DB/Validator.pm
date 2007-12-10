@@ -9,7 +9,7 @@ use Muldis::DB::Interface;
 ###########################################################################
 
 { package Muldis::DB::Validator; # module
-    our $VERSION = 0.005000;
+    use version; our $VERSION = qv('0.6.0');
 
     use Test::More;
 
@@ -17,23 +17,25 @@ use Muldis::DB::Interface;
 
 sub main {
     my ($args) = @_;
-    my ($engine_name, $dbms_config)
-        = @{$args}{'engine_name', 'dbms_config'};
+    my ($engine_name, $machine_config)
+        = @{$args}{'engine_name', 'machine_config'};
 
-    plan( 'tests' => 12 );
+    plan( 'tests' => 13 );
 
     print
         "#### Muldis::DB::Validator starting test of $engine_name ####\n";
 
     # Instantiate a Muldis DB DBMS / virtual machine.
-    my $dbms = Muldis::DB::Interface::new_dbms({
+    my $machine = Muldis::DB::Interface::new_machine({
         'engine_name' => $engine_name,
         'exp_ast_lang' => [ 'MuldisD', 'cpan:DUNCAND', '0.8.1' ],
-        'dbms_config' => $dbms_config,
+        'machine_config' => $machine_config,
     });
-    does_ok( $dbms, 'Muldis::DB::Interface::DBMS' );
+    does_ok( $machine, 'Muldis::DB::Interface::Machine' );
+    my $process = $machine->new_process();
+    does_ok( $process, 'Muldis::DB::Interface::Process' );
 
-    _scenario_foods_suppliers_shipments_v1( $dbms );
+    _scenario_foods_suppliers_shipments_v1( $process );
 
     print
         "#### Muldis::DB::Validator finished test of $engine_name ####\n";
@@ -44,18 +46,18 @@ sub main {
 ###########################################################################
 
 sub _scenario_foods_suppliers_shipments_v1 {
-    my ($dbms) = @_;
+    my ($process) = @_;
 
     # Declare our Perl-lexical variables to use for source data.
 
-    my $src_suppliers
-        = $dbms->new_var({ 'decl_type' => 'sys.Core.Relation.Relation' });
+    my $src_suppliers = $process->new_var({
+        'decl_type' => 'sys.Core.Relation.Relation' });
     does_ok( $src_suppliers, 'Muldis::DB::Interface::Var' );
-    my $src_foods
-        = $dbms->new_var({ 'decl_type' => 'sys.Core.Relation.Relation' });
+    my $src_foods = $process->new_var({
+        'decl_type' => 'sys.Core.Relation.Relation' });
     does_ok( $src_foods, 'Muldis::DB::Interface::Var' );
-    my $src_shipments
-        = $dbms->new_var({ 'decl_type' => 'sys.Core.Relation.Relation' });
+    my $src_shipments = $process->new_var({
+        'decl_type' => 'sys.Core.Relation.Relation' });
     does_ok( $src_shipments, 'Muldis::DB::Interface::Var' );
 
     # Load our example literal source data sets into said Perl-lexicals.
@@ -149,16 +151,16 @@ sub _scenario_foods_suppliers_shipments_v1 {
     # data and see what suppliers there are for foods coloured 'orange'.
 
     my $desi_colour
-        = $dbms->new_var({ 'decl_type' => 'sys.Core.Text.Text' });
+        = $process->new_var({ 'decl_type' => 'sys.Core.Text.Text' });
     does_ok( $desi_colour, 'Muldis::DB::Interface::Var' );
     $desi_colour->store_ast({ 'ast' => [ 'NEText', 'orange' ] });
     pass( 'no death from loading desired colour into VM' );
 
-    my $matched_suppl = $dbms->call_func({
+    my $matched_suppl = $process->call_func({
         'func_name' => 'sys.Core.Relation.semijoin',
         'args' => {
             'source' => $src_suppliers,
-            'filter' => $dbms->call_func({
+            'filter' => $process->call_func({
                 'func_name' => 'sys.Core.Relation.join',
                 'args' => {
                     'topic' => [ 'QuasiSet',
@@ -230,7 +232,7 @@ A common comprehensive test suite to run against all Engines
 
 =head1 VERSION
 
-This document describes Muldis::DB::Validator version 0.5.0 for Perl 5.
+This document describes Muldis::DB::Validator version 0.6.0 for Perl 5.
 
 =head1 SYNOPSIS
 
@@ -248,7 +250,7 @@ Muldis::DB Engine distribution:
     # Run the test suite.
     Muldis::DB::Validator::main({
         'engine_name' => 'Muldis::DB::Engine::Example',
-        'dbms_config' => {},
+        'machine_config' => {},
     });
 
     1;
@@ -309,10 +311,15 @@ I<This documentation is pending.>
 
 =head1 DEPENDENCIES
 
-This file requires any version of Perl 5.x.y that is at least 5.8.1.
+This file requires any version of Perl 5.x.y that is at least 5.8.1, and
+recommends one that is at least 5.10.0.
+
+It also requires these Perl 5 packages that are bundled with any version of
+Perl 5.x.y that is at least 5.10.0, and are also on CPAN for separate
+installation by users of earlier Perl versions: L<version>.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::Interface-0.5.0|Muldis::DB::Interface>.
+L<Muldis::DB::Interface-0.6.0|Muldis::DB::Interface>.
 
 =head1 INCOMPATIBILITIES
 
