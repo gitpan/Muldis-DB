@@ -9,7 +9,7 @@ External resources that you really ought to look at
 
 =head1 VERSION
 
-This document is Muldis::DB::SeeAlso version 0.4.2.
+This document is Muldis::DB::SeeAlso version 0.4.3.
 
 =head1 DESCRIPTION
 
@@ -204,7 +204,10 @@ employ SQL translator utilities internally.
 =item C<MuldisX::DB::\w+>
 
 Unofficial extensions to Muldis DB could be named in this space, though it
-doesn't have to be used if prior coordination happens between developers.
+doesn't have to be used if prior coordination happens between developers;
+moreover, this namespace is likely to be used even by the main Muldis DB
+developers to experiment with possible extensions without tying up a "good"
+namespace for them.
 
 =back
 
@@ -240,8 +243,8 @@ L<TripleStore>, L<Data::Table>, L<ORM>, L<OOPS>, L<Object::Transaction>,
 L<Relations>, L<DBIx::SimplePerl>, L<DBIx::YAWM>, L<Class::Entity>,
 L<SQL::Statement>, L<SQL::Parser>, L<SQL::Translator>, L<SQL::YASP>,
 L<SQL::Generator>, L<SQL::Schema>, L<SQL::Abstract>, L<SQL::Snippet>,
-L<SQL::Catalog>, L<DBIx::Perlish>, L<Tao::DBI>, L<NTuples>,
-L<DBIx::CopyRecord>.
+L<SQL::Catalog>, L<DBIx::Perlish>, L<DBIx::StORM>, L<Tao::DBI>, L<NTuples>,
+L<DBIx::CopyRecord>, L<Data::Domain>, L<Fey>.
 
 =head1 AUTHOR
 
@@ -251,7 +254,7 @@ Darren Duncan (C<perl@DarrenDuncan.net>)
 
 This file is part of the Muldis DB framework.
 
-Muldis DB is Copyright © 2002-2007, Darren Duncan.
+Muldis DB is Copyright © 2002-2008, Darren Duncan.
 
 See the LICENSE AND COPYRIGHT of L<Muldis::DB> for details.
 

@@ -17,13 +17,13 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME' => 'Muldis::DB',
-    'VERSION' => '0.6.0',
+    'VERSION' => '0.6.1',
     'ABSTRACT' => 'Full-featured truly relational DBMS in Perl',
     'AUTHOR' => 'Darren Duncan <perl@DarrenDuncan.net>',
     'LICENSE' => 'lgpl',
     'PREREQ_PM' => {
         # These are bundled with Perls 5.10.x but not Perls 5.8.x.
-        'version' => 0,
+        'version' => 0.74,
     },
 );
 

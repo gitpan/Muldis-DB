@@ -1,14 +1,14 @@
 --- #YAML:1.0
 name:                Muldis-DB
-version:             0.6.0
+version:             0.6.1
 abstract:            Full-featured truly relational DBMS in Perl
 license:             lgpl
-generated_by:        ExtUtils::MakeMaker version 6.36_01
+author:              
+    - Darren Duncan <perl@DarrenDuncan.net>
+generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     
-    version:                       0
+    version:                       0.74
 meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.2.html
-    version: 1.2
-author:
-    - Darren Duncan <perl@DarrenDuncan.net>
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3

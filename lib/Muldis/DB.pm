@@ -7,7 +7,7 @@ use warnings FATAL => 'all';
 ###########################################################################
 
 { package Muldis::DB; # package
-    use version; our $VERSION = qv('0.6.0');
+    use version; our $VERSION = qv('0.6.1');
     # Note that Perl code only exists at all in this file in order to help
     # the CPAN indexer handle the distribution properly.
 } # package Muldis::DB
@@ -29,7 +29,7 @@ Full-featured truly relational DBMS in Perl
 
 =head1 VERSION
 
-This document is Muldis::DB version 0.6.0.
+This document is Muldis::DB version 0.6.1.
 
 =head1 DESCRIPTION
 
@@ -248,7 +248,7 @@ Darren Duncan (C<perl@DarrenDuncan.net>)
 
 This file is part of the Muldis DB framework.
 
-Muldis DB is Copyright © 2002-2007, Darren Duncan.  All rights reserved.
+Muldis DB is Copyright © 2002-2008, Darren Duncan.  All rights reserved.
 
 Muldis DB is free software; you can redistribute it and/or modify it under
 the terms of the GNU Lesser General Public License (LGPL) as published by
