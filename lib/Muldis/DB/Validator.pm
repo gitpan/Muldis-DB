@@ -9,7 +9,7 @@ use Muldis::DB::Interface;
 ###########################################################################
 
 { package Muldis::DB::Validator; # module
-    use version; our $VERSION = qv('0.6.1');
+    use version; our $VERSION = qv('0.6.2');
 
     use Test::More;
 
@@ -28,7 +28,7 @@ sub main {
     # Instantiate a Muldis DB DBMS / virtual machine.
     my $machine = Muldis::DB::Interface::new_machine({
         'engine_name' => $engine_name,
-        'exp_ast_lang' => [ 'MuldisD', 'cpan:DUNCAND', '0.8.1' ],
+        'exp_ast_lang' => [ 'Muldis_D', 'cpan:DUNCAND', '0.8.1' ],
         'machine_config' => $machine_config,
     });
     does_ok( $machine, 'Muldis::DB::Interface::Machine' );
@@ -232,7 +232,7 @@ A common comprehensive test suite to run against all Engines
 
 =head1 VERSION
 
-This document describes Muldis::DB::Validator version 0.6.1 for Perl 5.
+This document describes Muldis::DB::Validator version 0.6.2 for Perl 5.
 
 =head1 SYNOPSIS
 
@@ -319,7 +319,7 @@ Perl 5.x.y that is at least 5.10.0, and are also on CPAN for separate
 installation by users of earlier Perl versions: L<version>.
 
 It also requires these Perl 5 classes that are in the current distribution:
-L<Muldis::DB::Interface-0.6.1|Muldis::DB::Interface>.
+L<Muldis::DB::Interface-0.6.2|Muldis::DB::Interface>.
 
 =head1 INCOMPATIBILITIES
 
@@ -346,6 +346,10 @@ This file is part of the Muldis DB framework.
 Muldis DB is Copyright © 2002-2008, Darren Duncan.
 
 See the LICENSE AND COPYRIGHT of L<Muldis::DB> for details.
+
+=head1 TRADEMARK POLICY
+
+The TRADEMARK POLICY in L<Muldis::DB> applies to this file too.
 
 =head1 ACKNOWLEDGEMENTS
 

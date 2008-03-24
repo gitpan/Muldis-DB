@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Muldis-DB
-version:             0.6.1
+version:             0.6.2
 abstract:            Full-featured truly relational DBMS in Perl
 license:             lgpl
 author:              
